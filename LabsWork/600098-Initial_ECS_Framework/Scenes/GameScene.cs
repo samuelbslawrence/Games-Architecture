@@ -21,6 +21,7 @@ namespace OpenGL_Game.Scenes
         SystemManager systemManager;
         public Camera camera;
         public static GameScene gameInstance;
+        bool[] keysPressed = new bool[349];
 
         public GameScene(SceneManager sceneManager) : base(sceneManager)
         {
@@ -35,6 +36,8 @@ namespace OpenGL_Game.Scenes
             sceneManager.updater = Update;
             // Set Keyboard events to go to a method in this class
             sceneManager.keyboardDownDelegate += Keyboard_KeyDown;
+            sceneManager.keyboardUpDelegate += Keyboard_KeyUp;
+
 
             // Enable Depth Testing
             GL.Enable(EnableCap.DepthTest);
@@ -91,6 +94,32 @@ namespace OpenGL_Game.Scenes
             //System.Console.WriteLine("fps=" + (int)(1.0/dt));
 
             // TODO: Add your update logic here
+
+
+            if (keysPressed[(char)Keys.Up])
+            {
+                camera.MoveForward(0.1f);
+            }
+
+            if (keysPressed[(char)Keys.Down])
+            {
+                camera.MoveForward(-0.1f);
+            }
+
+            if (keysPressed[(char)Keys.Left])
+            {
+                camera.RotateY(-0.01f);
+            }
+
+            if (keysPressed[(char)Keys.Right])
+            {
+                camera.RotateY(0.01f);
+            }
+
+            if (keysPressed[(char)Keys.M])
+            {
+                sceneManager.StartMenu();
+            }
         }
 
         /// <summary>
@@ -121,29 +150,22 @@ namespace OpenGL_Game.Scenes
 
             GUI.SetUpGUI(SceneManager.WindowWidth, SceneManager.WindowHeight);
 
+            sceneManager.keyboardUpDelegate -= Keyboard_KeyUp;
+
+
             // Need to remove assets (except Text) from Resource Manager
         }
 
         public void Keyboard_KeyDown(KeyboardKeyEventArgs e)
         {
-            switch (e.Key)
-            {
-                case Keys.Up:
-                    camera.MoveForward(0.1f);
-                    break;
-                case Keys.Down:
-                    camera.MoveForward(-0.1f);
-                    break;
-                case Keys.Left:
-                    camera.RotateY(-0.01f);
-                    break;
-                case Keys.Right:
-                    camera.RotateY(0.01f);
-                    break;
-                case Keys.M:
-                    sceneManager.StartMenu();
-                    break;
-            }
+            keysPressed[(char)e.Key] = true;
+
+            
+        }
+
+        public void Keyboard_KeyUp(KeyboardKeyEventArgs e)
+        {
+            keysPressed[(char)e.Key] = false;
         }
     }
 }
