@@ -119,6 +119,8 @@ namespace OpenGL_Game.Scenes
 
             ResourceManager.RemoveAllAssets();
 
+            GUI.SetUpGUI(SceneManager.WindowWidth, SceneManager.WindowHeight);
+
             // Need to remove assets (except Text) from Resource Manager
         }
 
