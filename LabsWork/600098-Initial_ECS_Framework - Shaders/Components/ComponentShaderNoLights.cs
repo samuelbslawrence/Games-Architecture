@@ -27,7 +27,7 @@ namespace OpenGL_Game.Components
         {
             ShaderLoader.UseProgram(pgmID);
             ShaderLoader.SetUniformMatrix4(uniform_mmodelviewproj, model);
-            geometry.Render();
+            geometry.Render(uniform_diffuse, 1);
         }
     }
 }

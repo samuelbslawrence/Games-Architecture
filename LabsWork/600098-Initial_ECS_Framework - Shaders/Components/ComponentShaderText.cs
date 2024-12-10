@@ -26,7 +26,7 @@ namespace OpenGL_Game.Components
 
             GL.ActiveTexture(TextureUnit.Texture0);
 
-            geometry.Render();
+            //geometry.Render(uniform_diffuse, 0);
         }
     }
 }
