@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using OpenTK.Audio.OpenAL;
+using OpenTK.Mathematics;
 
 namespace OpenGL_Game
 {
@@ -49,6 +50,9 @@ namespace OpenGL_Game
         {
             targetPosition = cameraPosition + cameraDirection;
             view = Matrix4.LookAt(cameraPosition, targetPosition, cameraUp);
+
+            AL.Listener(ALListener3f.Position, ref cameraPosition);
+            AL.Listener(ALListenerfv.Orientation, ref cameraDirection, ref cameraUp);
         }
     }
 }

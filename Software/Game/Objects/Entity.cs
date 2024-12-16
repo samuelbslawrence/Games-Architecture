@@ -10,7 +10,7 @@ namespace OpenGL_Game.Objects
         string name;
         List<IComponent> componentList = new List<IComponent>();
         ComponentTypes mask;
- 
+
         public Entity(string name)
         {
             this.name = name;
@@ -38,6 +38,18 @@ namespace OpenGL_Game.Objects
         public List<IComponent> Components
         {
             get { return componentList; }
+        }
+
+        public T GetComponent<T>() where T : IComponent
+        {
+            foreach (var component in componentList)
+            {
+                if (component is T)
+                {
+                    return (T)component;
+                }
+            }
+            return default(T);
         }
     }
 }

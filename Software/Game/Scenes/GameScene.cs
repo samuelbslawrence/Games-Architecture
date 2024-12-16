@@ -8,6 +8,8 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Mathematics;
 using SkiaSharp;
+using OpenTK.Audio.OpenAL;
+using System.IO;
 
 namespace OpenGL_Game.Scenes
 {
@@ -74,6 +76,7 @@ namespace OpenGL_Game.Scenes
             newEntity.AddComponent(new ComponentVelocity(0.0f, 0.0f, +5.0f));
             newEntity.AddComponent(new ComponentPosition(0.0f, 0.0f, -20.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Intergalactic_Spaceship/Intergalactic_Spaceship.obj"));
+            newEntity.AddComponent(new ComponentAudio("Audio/buzz.wav"));
             entityManager.AddEntity(newEntity);
         }
 
@@ -81,6 +84,7 @@ namespace OpenGL_Game.Scenes
         {
             systemManager.AddSystem(new SystemRender());
             systemManager.AddSystem(new SystemPhysics());
+            systemManager.AddSystem(new SystemAudio());
         }
 
         /// <summary>

@@ -1,22 +1,23 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
+
 public class Server
 {
     private const string FILE_NAME = "HighScore.txt";
-
     private static int highScore;
 
     private static void GetHighScore()
     {
-        if (File.Exists(FILE_NAME))
+        if (!File.Exists(FILE_NAME))
         {
             Console.WriteLine("HighScore.txt not found.");
             return;
         }
 
-        StreamReader fileReader = new(FILE_NAME);
-
+        using StreamReader fileReader = new(FILE_NAME);
         string line = fileReader.ReadLine();
         if (string.IsNullOrEmpty(line) || !int.TryParse(line, out int score))
         {
@@ -24,8 +25,6 @@ public class Server
         }
 
         highScore = score;
-
-        fileReader.Close();
     }
 
     private static void SetHighScore(int score)
@@ -41,13 +40,9 @@ public class Server
             File.Delete(FILE_NAME);
         }
 
-        StreamWriter fileWriter = new(FILE_NAME);
-
-        fileWriter.Write(highScore.ToString());
-
-        fileWriter.Close();
+        using StreamWriter fileWriter = new(FILE_NAME);
+        fileWriter.Write(score.ToString());
     }
-
 
     public static void Main(string[] args)
     {
@@ -60,36 +55,37 @@ public class Server
         // start listening
         listener.Start();
 
-        // accept a client
-        TcpClient client = listener.AcceptTcpClient();
-        // get the stream
-        NetworkStream stream = client.GetStream();
-        // create a writer and reader
-        StreamWriter writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
-        StreamReader reader = new StreamReader(stream, Encoding.ASCII);
-
-        // read from the client and echo back
-        try
+        while (true)
         {
-            string inputLine = "";
-            while (inputLine != null)
+            // accept a client
+            TcpClient client = listener.AcceptTcpClient();
+
+            // get the stream
+            NetworkStream stream = client.GetStream();
+            // create a writer and reader
+            StreamWriter writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
+            StreamReader reader = new StreamReader(stream, Encoding.ASCII);
+
+            // read from the client and echo back
+            try
             {
-                // read from the client
-                inputLine = reader.ReadLine();
-                // echo back to the client
-                writer.WriteLine(inputLine);
-                // print to the console
-                Console.WriteLine("Input response: " + inputLine);
+                string inputLine = "";
+                while ((inputLine = reader.ReadLine()) != null)
+                {
+                    // echo back to the client
+                    writer.WriteLine(inputLine);
+                    // print to the console
+                    Console.WriteLine("Input response: " + inputLine);
+                }
             }
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error: " + e.Message);
-        }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error: " + e.Message);
+            }
 
-        // close the connection
-        Console.WriteLine("Server disconnected from client.");
-        client.Close();
-        listener.Stop();
+            // close the connection
+            Console.WriteLine("Server disconnected from client.");
+            client.Close();
+        }
     }
 }
