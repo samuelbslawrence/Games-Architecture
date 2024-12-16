@@ -50,7 +50,7 @@ namespace OpenGL_Game.Scenes
             GL.ClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
             // Set Camera
-            camera = new Camera(new Vector3(0, 4, 7), new Vector3(0, 0, 0), (float)(sceneManager.Size.X) / (float)(sceneManager.Size.Y), 0.1f, 100f);
+            camera = new Camera(new Vector3(0, 0, 0), new Vector3(1, 0, 0), (float)(sceneManager.Size.X) / (float)(sceneManager.Size.Y), 0.1f, 100f);
 
             CreateEntities();
             CreateSystems();
@@ -61,6 +61,12 @@ namespace OpenGL_Game.Scenes
         private void CreateEntities()
         {
             Entity newEntity;
+
+            newEntity = new Entity("Player");
+            newEntity.AddComponent(new ComponentPlayer(camera, Vector3.UnitX));
+            newEntity.AddComponent(new ComponentPosition(Vector3.Zero));
+            newEntity.AddComponent(new ComponentVelocity(Vector3.Zero));
+            entityManager.AddEntity(newEntity);
 
             newEntity = new Entity("Moon");
             newEntity.AddComponent(new ComponentPosition(-5.0f, 0.0f, 0.0f));
@@ -82,6 +88,7 @@ namespace OpenGL_Game.Scenes
 
         private void CreateSystems()
         {
+            systemManager.AddSystem(new SystemPlayer());
             systemManager.AddSystem(new SystemRender());
             systemManager.AddSystem(new SystemPhysics());
             systemManager.AddSystem(new SystemAudio());
@@ -98,27 +105,6 @@ namespace OpenGL_Game.Scenes
             //System.Console.WriteLine("fps=" + (int)(1.0/dt));
 
             // TODO: Add your update logic here
-
-
-            if (keysPressed[(char)Keys.Up])
-            {
-                camera.MoveForward(0.1f);
-            }
-
-            if (keysPressed[(char)Keys.Down])
-            {
-                camera.MoveForward(-0.1f);
-            }
-
-            if (keysPressed[(char)Keys.Left])
-            {
-                camera.RotateY(-0.01f);
-            }
-
-            if (keysPressed[(char)Keys.Right])
-            {
-                camera.RotateY(0.01f);
-            }
 
             if (keysPressed[(char)Keys.M])
             {

@@ -39,6 +39,9 @@ namespace OpenGL_Game.Managers
             Console.WriteLine(version);  // NEW for Audio
             Console.WriteLine(vendor);  // NEW for Audio
             Console.WriteLine(renderer);  // NEW for Audio
+
+            keyboardDownDelegate += ControlsManager.OnKeyboardDown;
+            keyboardUpDelegate += ControlsManager.OnKeyboardUp;
         }
 
         protected override void OnKeyDown(KeyboardKeyEventArgs e)
