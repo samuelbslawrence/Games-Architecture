@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using OpenGL_Game.Managers;
 
 namespace OpenGL_Game
@@ -15,6 +16,7 @@ namespace OpenGL_Game
         [STAThread]
         static void Main()
         {
+            ThreadPool.QueueUserWorkItem(Client.tryConnecting);
             using (var game = new SceneManager())
                 game.Run();
         }

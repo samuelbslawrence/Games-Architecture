@@ -3,9 +3,55 @@ using System.Net.Sockets;
 using System.Text;
 public class Server
 {
+    private const string FILE_NAME = "HighScore.txt";
+
+    private static int highScore;
+
+    private static void GetHighScore()
+    {
+        if (File.Exists(FILE_NAME))
+        {
+            Console.WriteLine("HighScore.txt not found.");
+            return;
+        }
+
+        StreamReader fileReader = new(FILE_NAME);
+
+        string line = fileReader.ReadLine();
+        if (string.IsNullOrEmpty(line) || !int.TryParse(line, out int score))
+        {
+            return;
+        }
+
+        highScore = score;
+
+        fileReader.Close();
+    }
+
+    private static void SetHighScore(int score)
+    {
+        GetHighScore();
+        if (highScore >= score)
+        {
+            return;
+        }
+
+        if (File.Exists(FILE_NAME))
+        {
+            File.Delete(FILE_NAME);
+        }
+
+        StreamWriter fileWriter = new(FILE_NAME);
+
+        fileWriter.Write(highScore.ToString());
+
+        fileWriter.Close();
+    }
+
+
     public static void Main(string[] args)
     {
-        Console.WriteLine("Starting echo server...");
+        Console.WriteLine("Starting server...");
 
         // set port number
         int port = 8080;
@@ -31,9 +77,9 @@ public class Server
                 // read from the client
                 inputLine = reader.ReadLine();
                 // echo back to the client
-                writer.WriteLine("Echoing string: " + inputLine);
+                writer.WriteLine(inputLine);
                 // print to the console
-                Console.WriteLine("Echoing string: " + inputLine);
+                Console.WriteLine("Input response: " + inputLine);
             }
         }
         catch (Exception e)
