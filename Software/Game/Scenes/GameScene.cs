@@ -84,6 +84,11 @@ namespace OpenGL_Game.Scenes
             newEntity.AddComponent(new ComponentGeometry("Geometry/Intergalactic_Spaceship/Intergalactic_Spaceship.obj"));
             newEntity.AddComponent(new ComponentAudio("Audio/buzz.wav"));
             entityManager.AddEntity(newEntity);
+
+            newEntity = new Entity("Maze");
+            newEntity.AddComponent(new ComponentPosition(0.0f, 0.0f, 0.0f));
+            newEntity.AddComponent(new ComponentGeometry("Geometry/Maze/maze.obj"));
+            entityManager.AddEntity(newEntity);
         }
 
         private void CreateSystems()

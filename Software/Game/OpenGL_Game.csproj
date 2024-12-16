@@ -218,6 +218,9 @@
     <None Remove=".gitignore" />
     <None Remove="OpenTK.dll.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Geometry\Key\" />
+  </ItemGroup>
   <Target Name="BeforeResolveReferences">
   </Target>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
