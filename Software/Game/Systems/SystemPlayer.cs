@@ -1,6 +1,7 @@
 ﻿using OpenGL_Game.Components;
 using OpenGL_Game.Managers;
 using OpenGL_Game.Objects;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
@@ -24,25 +25,30 @@ namespace OpenGL_Game.Systems
                 var positionComponent = entity.GetComponent<ComponentPosition>();
                 var velocityComponent = entity.GetComponent<ComponentVelocity>();
 
-                if (ControlsManager.keysPressed[(char)Keys.Up])
+                if (ControlsManager.keysPressed[(char)Keys.W])
                 {
-                    playerComponent.camera.MoveForward(0.1f);
+                    velocityComponent.Velocity = 2.0f * playerComponent.direction;
                 }
-                if (ControlsManager.keysPressed[(char)Keys.Down])
+                else if (ControlsManager.keysPressed[(char)Keys.S])
                 {
-                    playerComponent.camera.MoveForward(-0.1f);
+                    velocityComponent.Velocity = -2.0f * playerComponent.direction;
                 }
-                if (ControlsManager.keysPressed[(char)Keys.Left])
+                else
                 {
-                    playerComponent.camera.RotateY(-0.01f);
+                    velocityComponent.Velocity = Vector3.Zero;
                 }
-                if (ControlsManager.keysPressed[(char)Keys.Right])
+                if (ControlsManager.keysPressed[(char)Keys.A])
                 {
-                    playerComponent.camera.RotateY(0.01f);
+                    playerComponent.direction = Matrix3.CreateRotationY(-0.01f) * playerComponent.direction;
+                }
+                if (ControlsManager.keysPressed[(char)Keys.D])
+                {
+                    playerComponent.direction = Matrix3.CreateRotationY(0.01f) * playerComponent.direction;
                 }
 
-                positionComponent.Position = playerComponent.camera.cameraPosition;
-                playerComponent.direction =  playerComponent.camera.cameraDirection;
+                playerComponent.camera.cameraPosition = positionComponent.Position;
+                playerComponent.camera.cameraDirection = playerComponent.direction;
+                playerComponent.camera.UpdateView();
             }
         }
     }

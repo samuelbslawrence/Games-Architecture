@@ -69,18 +69,13 @@ namespace OpenGL_Game.Scenes
             entityManager.AddEntity(newEntity);
 
             newEntity = new Entity("Moon");
-            newEntity.AddComponent(new ComponentPosition(-5.0f, 0.0f, 0.0f));
+            newEntity.AddComponent(new ComponentPosition(-40.0f, 5.0f, 0.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Moon/moon.obj"));
-            entityManager.AddEntity(newEntity);
-
-            newEntity = new Entity("Wraith_Raider_Starship");
-            newEntity.AddComponent(new ComponentPosition(+2.0f, 0.0f, 0.0f));
-            newEntity.AddComponent(new ComponentGeometry("Geometry/Wraith_Raider_Starship/Wraith_Raider_Starship.obj"));
             entityManager.AddEntity(newEntity);
 
             newEntity = new Entity("Intergalactic_Spaceship");
             newEntity.AddComponent(new ComponentVelocity(0.0f, 0.0f, +5.0f));
-            newEntity.AddComponent(new ComponentPosition(0.0f, 0.0f, -20.0f));
+            newEntity.AddComponent(new ComponentPosition(0.0f, 5.0f, -20.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Intergalactic_Spaceship/Intergalactic_Spaceship.obj"));
             newEntity.AddComponent(new ComponentAudio("Audio/buzz.wav"));
             entityManager.AddEntity(newEntity);
