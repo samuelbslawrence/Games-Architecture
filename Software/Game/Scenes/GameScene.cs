@@ -58,17 +58,20 @@ namespace OpenGL_Game.Scenes
         {
             Entity newEntity;
 
+            // Player
             newEntity = new Entity("Player");
             newEntity.AddComponent(new ComponentPlayer(camera, Vector3.UnitX));
             newEntity.AddComponent(new ComponentPosition(Vector3.Zero));
             newEntity.AddComponent(new ComponentVelocity(Vector3.Zero));
             entityManager.AddEntity(newEntity);
 
+            // Moon
             newEntity = new Entity("Moon");
             newEntity.AddComponent(new ComponentPosition(-40.0f, 5.0f, 0.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Moon/moon.obj"));
             entityManager.AddEntity(newEntity);
 
+            // Drone
             newEntity = new Entity("Intergalactic_Spaceship");
             newEntity.AddComponent(new ComponentVelocity(0.0f, 0.0f, +5.0f));
             newEntity.AddComponent(new ComponentPosition(0.0f, 5.0f, -20.0f));
@@ -76,9 +79,28 @@ namespace OpenGL_Game.Scenes
             newEntity.AddComponent(new ComponentAudio("Audio/buzz.wav"));
             entityManager.AddEntity(newEntity);
 
+            // Maze
             newEntity = new Entity("Maze");
             newEntity.AddComponent(new ComponentPosition(0.0f, -1.5f, 0.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Maze/maze.obj"));
+            entityManager.AddEntity(newEntity);
+
+            // Key 1
+            newEntity = new Entity("Key1");
+            newEntity.AddComponent(new ComponentPosition(9.0f, 0.1f, 9.0f));
+            newEntity.AddComponent(new ComponentGeometry("Geometry/Key/key.obj"));
+            entityManager.AddEntity(newEntity);
+
+            // Key 2
+            newEntity = new Entity("Key2");
+            newEntity.AddComponent(new ComponentPosition(-9.0f, 0.1f, -9.0f));
+            newEntity.AddComponent(new ComponentGeometry("Geometry/Key/key.obj"));
+            entityManager.AddEntity(newEntity);
+
+            // Key 3
+            newEntity = new Entity("Key3");
+            newEntity.AddComponent(new ComponentPosition(-9.0f, 0.1f, 9.0f));
+            newEntity.AddComponent(new ComponentGeometry("Geometry/Key/key.obj"));
             entityManager.AddEntity(newEntity);
         }
 
@@ -93,7 +115,7 @@ namespace OpenGL_Game.Scenes
         public override void Update(FrameEventArgs e)
         {
             dt = (float)e.Time;
-            //System.Console.WriteLine("fps=" + (int)(1.0/dt));
+            // System.Console.WriteLine("fps=" + (int)(1.0/dt));
 
             if (keysPressed[(char)Keys.M])
             {

@@ -21,9 +21,9 @@ public class ComponentAudio : IComponent
     {
         audioBuffer = ResourceManager.LoadAudio(audioFilePath);
         audioSource = AL.GenSource();
+
         AL.Source(audioSource, ALSourcei.Buffer, audioBuffer);
         AL.Source(audioSource, ALSourceb.Looping, true);
-
         AL.SourcePlay(audioSource);
     }
 
