@@ -8,5 +8,6 @@ namespace OpenGL_Game.Components
 {
     internal class ComponentBoxCollider
     {
+
     }
 }

@@ -77,6 +77,7 @@ namespace OpenGL_Game.Managers
         public static int LoadAudio(string filename)
         {
             int audioBuffer;
+
             // reserve a Handle for the audio file
             audioBuffer = AL.GenBuffer();
 
@@ -92,15 +93,13 @@ namespace OpenGL_Game.Managers
                 channels == 1 && bits_per_sample == 16 ? ALFormat.Mono16 :
                 channels == 2 && bits_per_sample == 8 ? ALFormat.Stereo8 :
                 channels == 2 && bits_per_sample == 16 ? ALFormat.Stereo16 :
-                (ALFormat)0; // unknown
+                (ALFormat)0;
             AL.BufferData(audioBuffer, sound_format, ref sound_data[0], sound_data.Length, sample_rate);
             Debug.Assert(AL.GetError() == ALError.NoError, "Error loading audio");
 
             return audioBuffer;
         }
-        /// <summary>
-        /// Load a WAV file.
-        /// </summary>
+
         private static byte[] LoadWave(Stream stream, out int channels, out int bits, out int rate)
         {
             if (stream == null)

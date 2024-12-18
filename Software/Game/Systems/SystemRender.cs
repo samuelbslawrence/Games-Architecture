@@ -27,9 +27,10 @@ namespace OpenGL_Game.Systems
             pgmID = GL.CreateProgram();
             LoadShader("Shaders/single-light.vert", ShaderType.VertexShader, pgmID, out vsID);
             LoadShader("Shaders/single-light.frag", ShaderType.FragmentShader, pgmID, out fsID);
+            
             GL.LinkProgram(pgmID);
-
             GL.GetProgram(pgmID, GetProgramParameterName.LinkStatus, out int success);
+            
             if (success == 0)
             {
                 string infoLog = GL.GetProgramInfoLog(pgmID);

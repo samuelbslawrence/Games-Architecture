@@ -12,6 +12,7 @@ namespace OpenGL_Game.Scenes
         {
             // Set the title of the window
             sceneManager.Title = "Main Menu";
+
             // Set the Render and Update delegates to the Update and Render methods of this class
             sceneManager.renderer = Render;
             sceneManager.updater = Update;
@@ -21,9 +22,7 @@ namespace OpenGL_Game.Scenes
             GL.ClearColor(0.2f, 0.75f, 1.0f, 1.0f);
         }
 
-        public override void Update(FrameEventArgs e)
-        {
-        }
+        public override void Update(FrameEventArgs e) { }
 
         public override void Render(FrameEventArgs e)
         {
@@ -36,6 +35,7 @@ namespace OpenGL_Game.Scenes
 
             //Display the Title using an outlined text
             SKPaint paint = new SKPaint();
+
             paint.TextSize = 100;
             paint.StrokeWidth = 2;
             paint.TextAlign = SKTextAlign.Center;

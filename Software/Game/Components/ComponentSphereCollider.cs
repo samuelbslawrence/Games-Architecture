@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OpenGL_Game.Components
 {
-    internal class ComponentCollider
+    internal class ComponentSphereCollider
     {
 
     }

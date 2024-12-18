@@ -13,9 +13,6 @@ using System.IO;
 
 namespace OpenGL_Game.Scenes
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
     class GameScene : Scene
     {
         public static float dt = 0;
@@ -33,13 +30,14 @@ namespace OpenGL_Game.Scenes
 
             // Set the title of the window
             sceneManager.Title = "Game";
+
             // Set the Render and Update delegates to the Update and Render methods of this class
             sceneManager.renderer = Render;
             sceneManager.updater = Update;
+
             // Set Keyboard events to go to a method in this class
             sceneManager.keyboardDownDelegate += Keyboard_KeyDown;
             sceneManager.keyboardUpDelegate += Keyboard_KeyUp;
-
 
             // Enable Depth Testing
             GL.Enable(EnableCap.DepthTest);
@@ -54,8 +52,6 @@ namespace OpenGL_Game.Scenes
 
             CreateEntities();
             CreateSystems();
-
-            // TODO: Add your initialization logic here
         }
 
         private void CreateEntities()
@@ -94,17 +90,10 @@ namespace OpenGL_Game.Scenes
             systemManager.AddSystem(new SystemAudio());
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="e">Provides a snapshot of timing values.</param>
         public override void Update(FrameEventArgs e)
         {
             dt = (float)e.Time;
             //System.Console.WriteLine("fps=" + (int)(1.0/dt));
-
-            // TODO: Add your update logic here
 
             if (keysPressed[(char)Keys.M])
             {
@@ -112,10 +101,6 @@ namespace OpenGL_Game.Scenes
             }
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="e">Provides a snapshot of timing values.</param>
         public override void Render(FrameEventArgs e)
         {
             GL.Viewport(0, 0, sceneManager.Size.X, sceneManager.Size.Y);
@@ -129,9 +114,6 @@ namespace OpenGL_Game.Scenes
             GUI.Render();
         }
 
-        /// <summary>
-        /// This is called when the game exits.
-        /// </summary>
         public override void Close()
         {
             sceneManager.keyboardDownDelegate -= Keyboard_KeyDown;
@@ -141,9 +123,6 @@ namespace OpenGL_Game.Scenes
             GUI.SetUpGUI(SceneManager.WindowWidth, SceneManager.WindowHeight);
 
             sceneManager.keyboardUpDelegate -= Keyboard_KeyUp;
-
-
-            // Need to remove assets (except Text) from Resource Manager
         }
 
         public void Keyboard_KeyDown(KeyboardKeyEventArgs e)

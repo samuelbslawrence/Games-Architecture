@@ -16,13 +16,14 @@ namespace OpenGL_Game.Scenes
 
         static Geometry geometry;
 
-        static private int textTexture;//The location of the texture on the graphics card
-
+        static private int textTexture;
         static private int m_width, m_height;
+
         static public Vector2 guiPosition = Vector2.Zero;
 
         static private SKSurface surface;
         static private SKCanvas canvas;
+
         static public SKColor clearColour = SKColors.Transparent;
         static SKImageInfo info;
 
@@ -36,6 +37,7 @@ namespace OpenGL_Game.Scenes
         public static void DrawText(String text, float x, float y, float size, byte red, byte green, byte blue)
         {
             SKPaint paint = new SKPaint();
+
             paint.TextSize = size;
             paint.StrokeWidth = 1;
             paint.IsAntialias = true;
@@ -58,13 +60,15 @@ namespace OpenGL_Game.Scenes
             GL.BindTexture(TextureTarget.Texture2D, textTexture);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)All.Linear);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)All.Linear);
+            
             SKImage textImage = surface.Snapshot();
             SKBitmap bmp = SKBitmap.FromImage(textImage);
             //FileStream file = File.Create("C://temp//canvas.png");
             //bmp.Encode(file, SKEncodedImageFormat.Png, 100);
             //file.Close();
+
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, bmp.Width, bmp.Height, 0,
-                            OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmp.GetPixels());
+            OpenTK.Graphics.OpenGL.PixelFormat.Bgra, PixelType.UnsignedByte, bmp.GetPixels());
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Disable(EnableCap.Texture2D);
@@ -94,6 +98,7 @@ namespace OpenGL_Game.Scenes
             pgmID = GL.CreateProgram();
             int vsID;
             int fsID;
+
             LoadShader("Shaders/text.vert", ShaderType.VertexShader, pgmID, out vsID);
             LoadShader("Shaders/text.frag", ShaderType.FragmentShader, pgmID, out fsID);
             GL.LinkProgram(pgmID);

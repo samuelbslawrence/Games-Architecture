@@ -4,7 +4,7 @@ using OpenGL_Game.Scenes;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Audio.OpenAL; // NEW for Audio
+using OpenTK.Audio.OpenAL;
 
 namespace OpenGL_Game.Managers
 {
@@ -28,17 +28,18 @@ namespace OpenGL_Game.Managers
         public SceneManager() : base(GameWindowSettings.Default, new NativeWindowSettings()
                                 { ClientSize = (width, height), Location = (windowXPos, windowYPos) })
         {
-            var device = ALC.OpenDevice(null);  // NEW for Audio
-            ALContextAttributes att = new ALContextAttributes();  // NEW for Audio
-            var context = ALC.CreateContext(device, att);  // NEW for Audio
-            ALC.MakeContextCurrent(context);  // NEW for Audio
+            var device = ALC.OpenDevice(null);
+            ALContextAttributes att = new ALContextAttributes();
+            var context = ALC.CreateContext(device, att);
+            ALC.MakeContextCurrent(context);
 
-            var version = AL.Get(ALGetString.Version);  // NEW for Audio
-            var vendor = AL.Get(ALGetString.Vendor);  // NEW for Audio
-            var renderer = AL.Get(ALGetString.Renderer);  // NEW for Audio
-            Console.WriteLine(version);  // NEW for Audio
-            Console.WriteLine(vendor);  // NEW for Audio
-            Console.WriteLine(renderer);  // NEW for Audio
+            var version = AL.Get(ALGetString.Version);
+            var vendor = AL.Get(ALGetString.Vendor);
+            var renderer = AL.Get(ALGetString.Renderer);
+
+            Console.WriteLine(version);
+            Console.WriteLine(vendor);
+            Console.WriteLine(renderer);
 
             keyboardDownDelegate += ControlsManager.OnKeyboardDown;
             keyboardUpDelegate += ControlsManager.OnKeyboardUp;
@@ -142,5 +143,4 @@ namespace OpenGL_Game.Managers
                 scene = new MainMenuScene(this);
         }
     }
-
 }

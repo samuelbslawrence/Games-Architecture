@@ -15,10 +15,13 @@ namespace OpenGL_Game.Managers
 
         // set port number
         static int port = 8080;
+
         // create a client
         static TcpClient client;
+
         // get the stream
         static NetworkStream stream;
+
         // create a writer and reader
         static StreamReader reader;
         static StreamWriter writer;
@@ -34,9 +37,11 @@ namespace OpenGL_Game.Managers
                     // read from the console
                     Console.Write("Enter text to send: ");
                     string lineToSend = Console.ReadLine();
+
                     // send to the server
                     Console.WriteLine("Sending to server: " + lineToSend);
                     writer.WriteLine(lineToSend);
+
                     // read from the server and print to the console
                     string lineReceived = reader.ReadLine();
                     Console.WriteLine("Received from server: " + lineReceived);
@@ -63,10 +68,13 @@ namespace OpenGL_Game.Managers
 
             // set port number
             port = 8080;
+
             // create a client
             client = new TcpClient("localhost", port);
+
             // get the stream
             stream = client.GetStream();
+
             // create a writer and reader
             reader = new StreamReader(stream);
             writer = new StreamWriter(stream) { AutoFlush = true };
