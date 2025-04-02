@@ -12,6 +12,7 @@ namespace OpenGL_Game.Components
         COMPONENT_AUDIO = 1 << 3,
         COMPONENT_COLLIDER = 1 << 4,
         COMPONENT_PLAYER = 1 << 5,
+        COMPONENT_SCALE = 1 << 6,
     }
 
     interface IComponent

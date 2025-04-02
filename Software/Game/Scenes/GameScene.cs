@@ -16,11 +16,12 @@ namespace OpenGL_Game.Scenes
     class GameScene : Scene
     {
         public static float dt = 0;
-        EntityManager entityManager;
+        public EntityManager entityManager;
         SystemManager systemManager;
         public Camera camera;
         public static GameScene gameInstance;
         bool[] keysPressed = new bool[349];
+        public int keysCollected = 0;
 
         public GameScene(SceneManager sceneManager) : base(sceneManager)
         {
@@ -54,55 +55,88 @@ namespace OpenGL_Game.Scenes
             CreateSystems();
         }
 
+        #region Create Entities
         private void CreateEntities()
         {
             Entity newEntity;
 
-            // Player
+            #region Entity Player
             newEntity = new Entity("Player");
-            newEntity.AddComponent(new ComponentPlayer(camera, Vector3.UnitX));
-            newEntity.AddComponent(new ComponentPosition(Vector3.Zero));
+            newEntity.AddComponent(new ComponentPlayer(camera, -Vector3.UnitX));
+            newEntity.AddComponent(new ComponentPosition(new Vector3(9.0f, 0.0f, -9.0f)));
             newEntity.AddComponent(new ComponentVelocity(Vector3.Zero));
             entityManager.AddEntity(newEntity);
+            #endregion
 
-            // Moon
+            #region Entity Moon
             newEntity = new Entity("Moon");
             newEntity.AddComponent(new ComponentPosition(-40.0f, 5.0f, 0.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Moon/moon.obj"));
             entityManager.AddEntity(newEntity);
+            #endregion
 
-            // Drone
+            #region Entity Drone
             newEntity = new Entity("Intergalactic_Spaceship");
             newEntity.AddComponent(new ComponentVelocity(0.0f, 0.0f, +5.0f));
-            newEntity.AddComponent(new ComponentPosition(0.0f, 5.0f, -20.0f));
+            newEntity.AddComponent(new ComponentPosition(0.0f, 0.0f, 0.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Intergalactic_Spaceship/Intergalactic_Spaceship.obj"));
+            newEntity.AddComponent(new ComponentScale(new Vector3(0.5f, 0.5f, 0.5f)));
             newEntity.AddComponent(new ComponentAudio("Audio/buzz.wav"));
             entityManager.AddEntity(newEntity);
+            #endregion
 
-            // Maze
+            #region Entity Maze
             newEntity = new Entity("Maze");
             newEntity.AddComponent(new ComponentPosition(0.0f, -1.5f, 0.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Maze/maze.obj"));
             entityManager.AddEntity(newEntity);
+            #endregion
 
+            #region Entity Keys
             // Key 1
             newEntity = new Entity("Key1");
             newEntity.AddComponent(new ComponentPosition(9.0f, 0.1f, 9.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Key/key.obj"));
+            newEntity.AddComponent(new ComponentSphereCollider(new Vector3(9.0f, 0.1f, 9.0f), 1.0f));
             entityManager.AddEntity(newEntity);
 
             // Key 2
             newEntity = new Entity("Key2");
             newEntity.AddComponent(new ComponentPosition(-9.0f, 0.1f, -9.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Key/key.obj"));
+            newEntity.AddComponent(new ComponentSphereCollider(new Vector3(-9.0f, 0.1f, -9.0f), 1.0f));
             entityManager.AddEntity(newEntity);
 
             // Key 3
             newEntity = new Entity("Key3");
             newEntity.AddComponent(new ComponentPosition(-9.0f, 0.1f, 9.0f));
             newEntity.AddComponent(new ComponentGeometry("Geometry/Key/key.obj"));
+            newEntity.AddComponent(new ComponentSphereCollider(new Vector3(-9.0f, 0.1f, 9.0f), 1.0f));
             entityManager.AddEntity(newEntity);
+            #endregion
+
+            #region Box Colliders
+            Entity testBox = new Entity("TestBoxCollider");
+            testBox.AddComponent(new ComponentPosition(-20.0f, 0.0f, 0.0f));
+            testBox.AddComponent(new ComponentBoxCollider(
+                new Vector3(-20.0f, 0.0f, 0.0f),
+                false,
+                new Vector2(4.0f, 4.0f),
+                true
+            ));
+            testBox.AddComponent(new ComponentGeometry("Geometry/Debug/red_box.obj"));
+            entityManager.AddEntity(testBox);
+            #endregion
+
+            #region Entity Skybox
+            newEntity = new Entity("Skybox");
+            newEntity.AddComponent(new ComponentPosition(0.0f, 0.0f, 0.0f));
+            newEntity.AddComponent(new ComponentGeometry("Geometry/Skybox/moon.obj"));
+            newEntity.AddComponent(new ComponentScale(new Vector3(10.0f, 10.0f, 10.0f)));
+            entityManager.AddEntity(newEntity);
+            #endregion
         }
+        #endregion
 
         private void CreateSystems()
         {
@@ -110,12 +144,14 @@ namespace OpenGL_Game.Scenes
             systemManager.AddSystem(new SystemRender());
             systemManager.AddSystem(new SystemPhysics());
             systemManager.AddSystem(new SystemAudio());
+            systemManager.AddSystem(new SystemCollision(entityManager));
+            systemManager.AddSystem(new SystemScale());
+            systemManager.AddSystem(new SystemDroneAI());
         }
 
         public override void Update(FrameEventArgs e)
         {
             dt = (float)e.Time;
-            // System.Console.WriteLine("fps=" + (int)(1.0/dt));
 
             if (keysPressed[(char)Keys.M])
             {
@@ -128,11 +164,10 @@ namespace OpenGL_Game.Scenes
             GL.Viewport(0, 0, sceneManager.Size.X, sceneManager.Size.Y);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            // Action ALL systems
             systemManager.ActionSystems(entityManager);
 
-            // Render score
-            GUI.DrawText("Score: 000", 30, 80, 30, 255, 255, 255);
+            // Render key collection counter
+            GUI.DrawText($"Keys: {keysCollected} / 3", 30, 80, 30, 255, 255, 255);
             GUI.Render();
         }
 
@@ -150,8 +185,6 @@ namespace OpenGL_Game.Scenes
         public void Keyboard_KeyDown(KeyboardKeyEventArgs e)
         {
             keysPressed[(char)e.Key] = true;
-
-            
         }
 
         public void Keyboard_KeyUp(KeyboardKeyEventArgs e)

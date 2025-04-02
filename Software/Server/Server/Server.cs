@@ -1,31 +1,34 @@
-﻿using System.Net;
+﻿using System;
+using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
+
 public class Server
 {
     private const string FILE_NAME = "HighScore.txt";
-
     private static int highScore;
 
     private static void GetHighScore()
     {
-        if (File.Exists(FILE_NAME))
+        // Corrected condition: if the file doesn't exist, show message.
+        if (!File.Exists(FILE_NAME))
         {
             Console.WriteLine("HighScore.txt not found.");
             return;
         }
 
-        StreamReader fileReader = new(FILE_NAME);
-
-        string line = fileReader.ReadLine();
-        if (string.IsNullOrEmpty(line) || !int.TryParse(line, out int score))
+        using (StreamReader fileReader = new StreamReader(FILE_NAME))
         {
-            return;
+            string line = fileReader.ReadLine();
+            if (string.IsNullOrEmpty(line) || !int.TryParse(line, out int score))
+            {
+                return;
+            }
+
+            highScore = score;
         }
-
-        highScore = score;
-
-        fileReader.Close();
     }
 
     private static void SetHighScore(int score)
@@ -41,61 +44,58 @@ public class Server
             File.Delete(FILE_NAME);
         }
 
-        StreamWriter fileWriter = new(FILE_NAME);
-
-        fileWriter.Write(highScore.ToString());
-
-        fileWriter.Close();
+        using (StreamWriter fileWriter = new StreamWriter(FILE_NAME))
+        {
+            fileWriter.Write(score.ToString());
+        }
     }
-
 
     public static void Main(string[] args)
     {
         Console.WriteLine("Starting server...");
 
-        // set port number
         int port = 8080;
-
-        // create a local listener
         TcpListener listener = new TcpListener(IPAddress.Loopback, port);
-
-        // start listening
         listener.Start();
+        Console.WriteLine($"Server started on port {port}. Waiting for connections...");
 
-        // accept a client
-        TcpClient client = listener.AcceptTcpClient();
-
-        // get the stream
-        NetworkStream stream = client.GetStream();
-
-        // create a writer and reader
-        StreamWriter writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true };
-        StreamReader reader = new StreamReader(stream, Encoding.ASCII);
-
-        // read from the client and echo back
-        try
+        while (true)
         {
-            string inputLine = "";
-            while (inputLine != null)
+            // Accept a client connection and process it on a new thread
+            TcpClient client = listener.AcceptTcpClient();
+            Console.WriteLine("Client connected.");
+
+            // Launch a new thread to handle the client
+            Thread clientThread = new Thread(() => HandleClient(client));
+            clientThread.Start();
+        }
+    }
+
+    private static void HandleClient(TcpClient client)
+    {
+        using (client)
+        {
+            NetworkStream stream = client.GetStream();
+            using (StreamWriter writer = new StreamWriter(stream, Encoding.ASCII) { AutoFlush = true })
+            using (StreamReader reader = new StreamReader(stream, Encoding.ASCII))
             {
-                // read from the client
-                inputLine = reader.ReadLine();
-
-                // echo back to the client
-                writer.WriteLine(inputLine);
-
-                // print to the console
-                Console.WriteLine("Input response: " + inputLine);
+                try
+                {
+                    string inputLine;
+                    // Read from the client until the connection is closed.
+                    while ((inputLine = reader.ReadLine()) != null)
+                    {
+                        // Echo back the input to the client.
+                        writer.WriteLine(inputLine);
+                        Console.WriteLine("Received: " + inputLine);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error: " + e.Message);
+                }
+                Console.WriteLine("Client disconnected.");
             }
         }
-        catch (Exception e)
-        {
-            Console.WriteLine("Error: " + e.Message);
-        }
-
-        // close the connection
-        Console.WriteLine("Server disconnected from client.");
-        client.Close();
-        listener.Stop();
     }
 }
