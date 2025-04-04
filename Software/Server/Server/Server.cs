@@ -8,51 +8,56 @@ using System.Threading;
 public class Server
 {
     private const string FILE_NAME = "HighScore.txt";
-    private static int highScore;
+    // For time scores, lower is better. Start with MaxValue so any valid time will update it.
+    private static double highScore = double.MaxValue;
 
-    private static void GetHighScore()
+    private static void GetHighScoreFromFile()
     {
-        // Corrected condition: if the file doesn't exist, show message.
         if (!File.Exists(FILE_NAME))
         {
-            Console.WriteLine("HighScore.txt not found.");
+            Console.WriteLine("HighScore.txt not found. Using default high score.");
             return;
         }
 
         using (StreamReader fileReader = new StreamReader(FILE_NAME))
         {
             string line = fileReader.ReadLine();
-            if (string.IsNullOrEmpty(line) || !int.TryParse(line, out int score))
+            if (string.IsNullOrEmpty(line) || !double.TryParse(line, out double score))
             {
+                Console.WriteLine("HighScore.txt exists but could not be parsed. Using default high score.");
                 return;
             }
-
             highScore = score;
+            Console.WriteLine($"Loaded high score: {highScore:0.00} seconds");
         }
     }
 
-    private static void SetHighScore(int score)
+    private static void SetHighScore(double score)
     {
-        GetHighScore();
-        if (highScore >= score)
+        // For a time-based score, a lower number is better.
+        // Update only if the new score is lower than the current high score.
+        if (score >= highScore)
         {
             return;
         }
+        highScore = score;
+        Console.WriteLine($"New high score: {highScore:0.00} seconds");
 
         if (File.Exists(FILE_NAME))
         {
             File.Delete(FILE_NAME);
         }
-
         using (StreamWriter fileWriter = new StreamWriter(FILE_NAME))
         {
-            fileWriter.Write(score.ToString());
+            fileWriter.Write(highScore.ToString("0.00"));
         }
     }
 
     public static void Main(string[] args)
     {
         Console.WriteLine("Starting server...");
+        // Attempt to load the current high score from file.
+        GetHighScoreFromFile();
 
         int port = 8080;
         TcpListener listener = new TcpListener(IPAddress.Loopback, port);
@@ -85,9 +90,36 @@ public class Server
                     // Read from the client until the connection is closed.
                     while ((inputLine = reader.ReadLine()) != null)
                     {
-                        // Echo back the input to the client.
-                        writer.WriteLine(inputLine);
                         Console.WriteLine("Received: " + inputLine);
+
+                        if (inputLine.StartsWith("GetHighScore"))
+                        {
+                            // Send the current high score, or "0.00" if no score has been set.
+                            string scoreToSend = (highScore == double.MaxValue) ? "0.00" : highScore.ToString("0.00");
+                            writer.WriteLine(scoreToSend);
+                            Console.WriteLine("Sent high score: " + scoreToSend);
+                        }
+                        else if (inputLine.StartsWith("Score:"))
+                        {
+                            // Extract and parse the score.
+                            string scorePart = inputLine.Substring("Score:".Length).Trim();
+                            if (double.TryParse(scorePart, out double score))
+                            {
+                                Console.WriteLine("Received score: " + score.ToString("0.00"));
+                                // Update high score if the new score is lower.
+                                SetHighScore(score);
+                                writer.WriteLine("High score updated to: " + highScore.ToString("0.00"));
+                            }
+                            else
+                            {
+                                writer.WriteLine("Invalid score format.");
+                            }
+                        }
+                        else
+                        {
+                            // Echo back the input for any other messages.
+                            writer.WriteLine(inputLine);
+                        }
                     }
                 }
                 catch (Exception e)

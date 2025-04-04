@@ -8,7 +8,8 @@ namespace OpenGL_Game.Scenes
         SCENE_NONE,
         SCENE_MAIN_MENU,
         SCENE_GAME,
-        SCENE_GAME_OVER
+        SCENE_GAME_OVER,
+        SCENE_END
     }
     abstract class Scene
     {

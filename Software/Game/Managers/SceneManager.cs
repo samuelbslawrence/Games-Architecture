@@ -129,18 +129,18 @@ namespace OpenGL_Game.Managers
             GUI.SetUpGUI(e.Width, e.Height);
         }
 
-        public void ChangeScene(SceneTypes sceneType) 
+        public void ChangeScene(SceneTypes sceneType)
         {
             if (scene != null) scene.Close();
 
             if (sceneType == SceneTypes.SCENE_GAME)
                 scene = new GameScene(this);
-
             else if (sceneType == SceneTypes.SCENE_MAIN_MENU)
                 scene = new MainMenuScene(this);
-
             else if (sceneType == SceneTypes.SCENE_GAME_OVER)
                 scene = new MainMenuScene(this);
+            else if (sceneType == SceneTypes.SCENE_END)
+                scene = new EndScene(this);
         }
     }
 }

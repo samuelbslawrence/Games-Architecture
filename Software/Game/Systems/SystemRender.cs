@@ -25,8 +25,8 @@ namespace OpenGL_Game.Systems
         public SystemRender()
         {
             pgmID = GL.CreateProgram();
-            LoadShader("Shaders/unlit.vert", ShaderType.VertexShader, pgmID, out vsID);
-            LoadShader("Shaders/unlit.frag", ShaderType.FragmentShader, pgmID, out fsID);
+            LoadShader("Shaders/single-light.vert", ShaderType.VertexShader, pgmID, out vsID);
+            LoadShader("Shaders/single-light.frag", ShaderType.FragmentShader, pgmID, out fsID);
 
             GL.LinkProgram(pgmID);
             GL.GetProgram(pgmID, GetProgramParameterName.LinkStatus, out int success);

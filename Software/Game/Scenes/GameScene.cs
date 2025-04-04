@@ -23,6 +23,12 @@ namespace OpenGL_Game.Scenes
         bool[] keysPressed = new bool[349];
         public int keysCollected = 0;
 
+        #region Timer Variables
+        private double elapsedTime = 0;
+        private bool gameEnded = false;
+        public static double finalTime { get; private set; }
+        #endregion
+
         public GameScene(SceneManager sceneManager) : base(sceneManager)
         {
             gameInstance = this;
@@ -115,6 +121,14 @@ namespace OpenGL_Game.Scenes
             entityManager.AddEntity(newEntity);
             #endregion
 
+            #region Portal Frame
+            Entity portalFrame = new Entity("PortalFrame");
+            portalFrame.AddComponent(new ComponentPosition(new Vector3(0f, -1.5f, 0f)));
+            portalFrame.AddComponent(new ComponentGeometry("Geometry/Portal/PortalFrame.obj"));
+            portalFrame.AddComponent(new ComponentSphereCollider(new Vector3(0f, -1.5f, 0f), 2.0f));
+            entityManager.AddEntity(portalFrame);
+            #endregion
+
             #region Box Colliders
             Entity testBox = new Entity("TestBoxCollider");
             testBox.AddComponent(new ComponentPosition(-20.0f, 0.0f, 0.0f));
@@ -152,6 +166,11 @@ namespace OpenGL_Game.Scenes
         public override void Update(FrameEventArgs e)
         {
             dt = (float)e.Time;
+            // Update the timer only if the game hasn't ended
+            if (!gameEnded)
+            {
+                elapsedTime += e.Time;
+            }
 
             if (keysPressed[(char)Keys.M])
             {
@@ -166,8 +185,9 @@ namespace OpenGL_Game.Scenes
 
             systemManager.ActionSystems(entityManager);
 
-            // Render key collection counter
+            // Render key collection counter and timer on HUD
             GUI.DrawText($"Keys: {keysCollected} / 3", 30, 80, 30, 255, 255, 255);
+            GUI.DrawText($"Time: {elapsedTime:0.00} s", 30, 120, 30, 255, 255, 255);
             GUI.Render();
         }
 
@@ -190,6 +210,17 @@ namespace OpenGL_Game.Scenes
         public void Keyboard_KeyUp(KeyboardKeyEventArgs e)
         {
             keysPressed[(char)e.Key] = false;
+        }
+
+        // Called by collision system when the portal is touched and all keys are collected
+        public void GoToEndScene()
+        {
+            if (!gameEnded)
+            {
+                finalTime = elapsedTime;
+                gameEnded = true;
+                sceneManager.ChangeScene(SceneTypes.SCENE_END);
+            }
         }
     }
 }
