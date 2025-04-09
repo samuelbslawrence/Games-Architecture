@@ -38,10 +38,15 @@ namespace OpenGL_Game.Systems
                 if (other == entity)
                     continue;
 
-                // --- Box Colliders (unchanged) ---
+                // --- Box Colliders (walls, etc.) ---
                 var boxCollider = other.GetComponent<ComponentBoxCollider>();
                 if (boxCollider != null)
                 {
+                    // If this collider is from a maze wall and collisions are disabled, skip it.
+                    if (other.Name == "LineBoxCollider" && !GameScene.wallsCollisionEnabled)
+                        continue;
+
+                    // Determine the collider center. If the owning entity has a ComponentPosition, use that.
                     Vector3 colliderCenter = boxCollider.Center;
                     var colliderPos = other.GetComponent<ComponentPosition>();
                     if (colliderPos != null)
@@ -58,7 +63,7 @@ namespace OpenGL_Game.Systems
                     if (playerXZ.X >= left && playerXZ.X <= right &&
                         playerXZ.Y >= bottom && playerXZ.Y <= top)
                     {
-                        // Overlap logic
+                        // Overlap logic with walls ...
                         float overlapLeft = playerXZ.X - left;
                         float overlapRight = right - playerXZ.X;
                         float overlapBottom = playerXZ.Y - bottom;
@@ -103,7 +108,6 @@ namespace OpenGL_Game.Systems
                     Vector2 diff2D = new Vector2(playerPos.Position.X - colliderCenter.X,
                                                  playerPos.Position.Z - colliderCenter.Z);
                     float distance2D = diff2D.Length;
-
                     if (distance2D < sphereCollider.Radius)
                     {
                         // If this is a Key...
@@ -113,22 +117,42 @@ namespace OpenGL_Game.Systems
                             {
                                 GameScene.gameInstance.keysCollected++;
                                 EntitiesToRemove.Add(other);
+
+                                // Play the key pickup sound using ResourceManager.
+                                ResourceManager.PlayAudio("Audio/a_key_is_collected.wav");
                             }
                             continue;
                         }
                         // If this is the Portal Frame...
                         else if (other.Name == "PortalFrame")
                         {
-                            // If the player has all 3 keys, go to the EndScene
                             if (GameScene.gameInstance.keysCollected >= 3)
                             {
                                 GameScene.gameInstance.GoToEndScene();
                             }
                             continue;
                         }
+                        // If this is the Drone...
+                        else if (other.Name == "Intergalactic_Spaceship")
+                        {
+                            GameScene.gameInstance.HandlePlayerHit();
+                            continue;
+                        }
+                        // If this is the Rolling Object...
+                        else if (other.Name == "RollingObject")
+                        {
+                            GameScene.gameInstance.HandlePlayerHit();
+                            continue;
+                        }
+                        else if (other.Name == "BouncingObject")
+                        {
+                            // If the player touches the bouncing object, lose a life.
+                            GameScene.gameInstance.HandlePlayerHit();
+                            continue;
+                        }
                         else
                         {
-                            // Normal sphere collision (repelling logic)
+                            // Normal sphere collision (e.g., repelling push-back)
                             if (distance2D == 0)
                             {
                                 diff2D = new Vector2(1, 0);

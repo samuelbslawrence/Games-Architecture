@@ -28,11 +28,21 @@ namespace OpenGL_Game.Systems
 
         public void OnAction(Entity entity)
         {
-            if (entity.Name != "Intergalactic_Spaceship") return;
+            // Only act on the drone entity.
+            if (entity.Name != "Intergalactic_Spaceship")
+                return;
 
             var dronePos = entity.GetComponent<ComponentPosition>();
             var droneVel = entity.GetComponent<ComponentVelocity>();
-            if (dronePos == null || droneVel == null) return;
+            if (dronePos == null || droneVel == null)
+                return;
+
+            // If debug movement is turned off, stop the drone.
+            if (!GameScene.debugMovementEnabled)
+            {
+                droneVel.Velocity = Vector3.Zero;
+                return;
+            }
 
             var player = GameScene.gameInstance?.entityManager.FindEntity("Player");
             if (player == null) return;
